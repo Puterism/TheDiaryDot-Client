@@ -95,17 +95,13 @@ export default {
     hideToolbar: function () {
       this.toolbarDisplay = 'none'
     },
-    plainTextPaste: function (e) {
-      e.preventDefault()
-      const text = (e.originalEvent || e).clipboardData.getData('text/plain')
-      document.execCommand('insertHTML', false, text)
-    },
     saveDiary: function (temp) {
       const baseURI = Setting.serverURI
-      const content = document.getElementById('editor').innerHTML
+      const content = document.getElementById('editor').innerHTML.replace(/"/g, '\\"')
       const date = this.date
       const year = date.getFullYear()
       const userID = this.$store.state.userID
+      console.log(content)
       if (!content) {
         this.setErrorMessage('err')
         return false
