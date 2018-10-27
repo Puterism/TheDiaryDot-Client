@@ -101,7 +101,6 @@ export default {
       const date = this.date
       const year = date.getFullYear()
       const userID = this.$store.state.userID
-      console.log(content)
       if (!content) {
         this.setErrorMessage('err')
         return false
