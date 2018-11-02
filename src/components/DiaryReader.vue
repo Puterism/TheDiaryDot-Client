@@ -124,7 +124,6 @@ export default {
       const baseURI = Setting.serverURI
       const parsedMonth = (this.month < 10) ? '0' + this.month.toString() : this.month
       const query = `query { getDiariesByMonth(year: "${this.year}", month: "${parsedMonth}", userId: "${this.$store.state.userID}") { _id, date, content, savedDateTime } }`
-      console.log(query)
       this.$http.post(`${baseURI}`, {
         'query': query
       })

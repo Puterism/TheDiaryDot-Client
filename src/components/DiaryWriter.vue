@@ -118,7 +118,6 @@ export default {
       } else {
         query = `mutation { addDiary(date: "${parsedDate}", content: "${content}", userId: "${userID}") }`
       }
-      console.log(query)
       this.$http.post(`${baseURI}`, {
         'query': query
       })
@@ -160,7 +159,6 @@ export default {
           editDiary(_id: "${_id}", date: "${parsedDate}", content: "${content}", userId: "${userID}")
         }
       `
-      console.log(query)
       this.$http.post(`${baseURI}`, {
         'query': query
       })
