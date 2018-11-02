@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Header writer :saveDiary="saveDiary" :isTempDiarySaved="isTempDiarySaved" />
+    <Header writer :saveDiary="saveDiary" :editDiary="editDiary" :isTempDiarySaved="isTempDiarySaved" :nowEditing="nowEditing" />
     <div class="diary-writer">
       <div class="diary-writer__date">
         <font-awesome-icon icon="calendar-alt" />
@@ -59,7 +59,8 @@ export default {
       isTempDiarySaved: false,
       tempDiary: null,
       tempDiaryDateTime: null,
-      errMsg: null
+      nowEditing: false,
+      diaryID: null
     }
   },
   methods: {
@@ -99,13 +100,13 @@ export default {
       const baseURI = Setting.serverURI
       const content = document.getElementById('editor').innerHTML.replace(/"/g, '\\"')
       const date = this.date
-      const year = date.getFullYear()
       const userID = this.$store.state.userID
       if (!content) {
         this.setErrorMessage('err')
         return false
       }
 
+      const year = date.getFullYear()
       let month = (1 + date.getMonth()).toString()
       month = month.length > 1 ? month : '0' + month
       let day = date.getDate().toString()
@@ -113,20 +114,58 @@ export default {
       const parsedDate = year + '-' + month + '-' + day
       let query = null
       if (temp) {
-        query = 'mutation { addTempDiary(date: "' + parsedDate + '", content: "' + content + '", userId: "' + userID + '") { _id, date, content } }'
+        query = `mutation { addTempDiary(date: "${parsedDate}", content: "${content}", userId: "${userID}") }`
       } else {
-        query = 'mutation { addDiary(date: "' + parsedDate + '", content: "' + content + '", userId: "' + userID + '") { _id, date, content } }'
+        query = `mutation { addDiary(date: "${parsedDate}", content: "${content}", userId: "${userID}") }`
       }
+      console.log(query)
       this.$http.post(`${baseURI}`, {
         'query': query
       })
-        .then((result) => {
+        .then((response) => {
           if (!temp) {
             this.deleteTempDiary()
             router.push({ path: 'main', name: 'DiaryReaderContainer', params: { year: year, month: month } })
           } else {
             this.tempDiarySaveToggle()
           }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    loadDiary: function () {
+      if (this.$route.params.data) {
+        const data = this.$route.params.data
+        this.diaryID = data._id
+        this.date = new Date(data.date)
+        document.getElementById('editor').innerHTML = data.content
+        this.nowEditing = true
+      }
+    },
+    editDiary: function () {
+      const baseURI = Setting.serverURI
+      const _id = this.diaryID
+      const content = document.getElementById('editor').innerHTML.replace(/"/g, '\\"')
+      const date = this.date
+      const userID = this.$store.state.userID
+      const year = date.getFullYear()
+      let month = (1 + date.getMonth()).toString()
+      month = month.length > 1 ? month : '0' + month
+      let day = date.getDate().toString()
+      day = day.length > 1 ? day : '0' + day
+      const parsedDate = year + '-' + month + '-' + day
+      const query = `
+        mutation {
+          editDiary(_id: "${_id}", date: "${parsedDate}", content: "${content}", userId: "${userID}")
+        }
+      `
+      console.log(query)
+      this.$http.post(`${baseURI}`, {
+        'query': query
+      })
+        .then((response) => {
+          router.push({ path: 'main', name: 'DiaryReaderContainer', params: { year: year, month: month } })
         })
         .catch((err) => {
           console.error(err)
@@ -175,10 +214,6 @@ export default {
       this.$http.post(`${baseURI}`, {
         'query': query
       })
-        .then((response) => {
-          const data = response.data.data.deleteTempDiary
-          return data
-        })
     },
     setErrorMessage: function (msg) {
       this.errMsg = msg
@@ -190,6 +225,7 @@ export default {
     this.checkTempDiary()
   },
   mounted: function () {
+    this.loadDiary()
     document.getElementById('editor').focus()
   }
 }

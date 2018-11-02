@@ -21,7 +21,8 @@
         <button class="save-temp-btn" v-else @click="saveDiary(true)">
           임시 저장
         </button>
-        <button class="save-btn" @click="saveDiary(false)">일기 저장하기</button>
+        <button class="save-btn" @click="editDiary" v-if="nowEditing">일기 수정하기</button>
+        <button class="save-btn" @click="saveDiary(false)" v-else>일기 저장하기</button>
       </div>
       <div class="diary-user" @click="userMenuToggle">
         <font-awesome-icon icon="user-circle" v-if="!isUserPicLoaded && userPicUrl" />
@@ -44,8 +45,10 @@ export default {
     writer: Boolean,
     reader: Boolean,
     saveDiary: Function,
+    editDiary: Function,
     getDiaries: Function,
-    isTempDiarySaved: Boolean
+    isTempDiarySaved: Boolean,
+    nowEditing: Boolean
   },
   computed: {
     userPic: function () {
@@ -79,7 +82,7 @@ export default {
     }
   },
   mounted: function () {
-    this.$store.dispatch('getUserInfo')
+    // this.$store.dispatch('getUserInfo')
   }
 }
 </script>

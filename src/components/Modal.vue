@@ -8,7 +8,7 @@
           이 일기를 어떻게 할까요?
         </div>
         <div class="modal-options">
-          <button class="edit">
+          <button class="edit" @click="editDiary">
             <font-awesome-icon icon="edit" />
             수정할래요
           </button>
@@ -24,6 +24,7 @@
 
 <script>
 import DiaryReaderItem from '@/components/DiaryReaderItem.vue'
+import router from '@/router'
 
 export default {
   name: 'Modal',
@@ -48,6 +49,9 @@ export default {
         this.diary.content = this.diary.content.slice(0, 200)
         this.diary.content += '...'
       }
+    },
+    editDiary: function () {
+      router.push({ path: '/writer', name: 'DiaryWriterContainer', params: { data: this.diary } })
     },
     deleteDiary: function () {
       this.$emit('deleteDiary', this.diary._id)

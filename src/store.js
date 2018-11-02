@@ -49,7 +49,7 @@ const store = new Vuex.Store({
     getAuthData: function (context) {
       context.commit('setToken', { token: getCookie('auth') })
       context.commit('setUserID', { userID: getCookie('fbid') })
-      context.dispatch('getUserInfo')
+      // context.dispatch('getUserInfo')
     }
   }
 })
