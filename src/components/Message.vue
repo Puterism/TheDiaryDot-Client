@@ -1,6 +1,6 @@
 <template>
-  <transition name="message-show" :duration="500" @before-enter="beforeEnter" @before-leave="beforeLeave">
-    <div class="message-container" ref="message" v-if="nowDisplaying">
+  <transition name="message-show" :duration="500" @leave="leave">
+    <div class="message-container" v-if="nowDisplaying">
       <slot :close="messageClose"></slot>
       <span class="message-close" @click="messageClose" v-if="!hideCloseButton">
         <font-awesome-icon icon='times' />
@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import Velocity from 'velocity-animate'
+
 export default {
   name: 'Message',
   props: {
@@ -30,17 +32,10 @@ export default {
       this.nowDisplaying = false
     },
     getHeight: function () {
-      this.height = this.$refs.message.clientHeight + 10
+      this.height = this.$el.clientHeight + 10
     },
-    beforeEnter: function (el) {
-      this.$nextTick(function () {
-        setTimeout(() => {
-          el.style.top = `0px`
-        }, 100)
-      })
-    },
-    beforeLeave: function (el) {
-      el.style.top = `-${this.height}px`
+    leave: function (el, done) {
+      Velocity(el, { top: `-${el.clientHeight + 10}px` }, { duration: 500, easing: 'ease', complete: done })
     },
     autoClose: function () {
       setTimeout(() => {
@@ -49,8 +44,8 @@ export default {
     }
   },
   mounted: function () {
-    this.getHeight()
-    this.$el.style.top = `-${this.height}px`
+    this.$el.style.top = `-${this.$el.clientHeight + 10}px`
+    Velocity(this.$el, { top: 0 }, { duration: 500, easing: 'ease' })
     if (this.displayTime) {
       this.autoClose()
     }
@@ -71,13 +66,9 @@ export default {
   border-radius: 0 0 10px 10px;
   color: white;
   padding: 15px;
-  /*-webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.75);*/
-  /*-moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.75);*/
-  /*box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.75);*/
   display: flex;
   align-items: center;
   flex-direction: row;
-  transition: all .5s ease;
 }
 
 .message-container h1, .message-container h2, .message-container h3, .message-container h4, .message-container h5, .message-container h6, .message-container p {
@@ -102,11 +93,5 @@ export default {
   right: 15px;
   cursor: pointer;
   font-size: 20px;
-}
-</style>
-
-<style scoped>
-.message-show-enter-active, .message-show-leave-active {
-  transition: all .5s ease;
 }
 </style>

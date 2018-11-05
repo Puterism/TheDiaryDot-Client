@@ -19,6 +19,10 @@ function getCookie (cname) {
   return ''
 }
 
+function deleteCookie (cname) {
+  document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+}
+
 const store = new Vuex.Store({
   state: {
     userID: null,
@@ -49,6 +53,14 @@ const store = new Vuex.Store({
       context.commit('setToken', { token: getCookie('auth') })
       context.commit('setUserID', { userID: getCookie('fbid') })
       context.commit('setUserName', { userName: getCookie('fbname') })
+    },
+    logout: function (context) {
+      deleteCookie('auth')
+      deleteCookie('fbid')
+      deleteCookie('fbname')
+      context.commit('setToken', { token: null })
+      context.commit('setUserID', { userID: null })
+      context.commit('setUserName', { userName: null })
     }
   }
 })

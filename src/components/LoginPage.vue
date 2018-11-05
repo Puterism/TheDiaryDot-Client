@@ -9,12 +9,27 @@
         </button>
       </div>
     </div>
+    <Message v-if="isLogout" :displayTime="3000" :hideCloseButton="true">
+      <div class="message-content">
+        <h3>로그아웃되었습니다.</h3>
+      </div>
+    </Message>
   </div>
 </template>
 
 <script>
+import Message from '@/components/Message'
+
 export default {
   name: 'LoginPage',
+  components: {
+    Message
+  },
+  computed: {
+    isLogout: function () {
+      return this.$route.params.logout
+    }
+  },
   methods: {
     fbLogin: function () {
       window.location.href = `${window.location.origin}/api/auth/facebook`

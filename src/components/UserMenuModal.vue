@@ -9,7 +9,7 @@
           {{ this.$store.state.userName }}님, 어서 와요!
         </div>
         <div class="modal-options">
-          <button class="button-logout">
+          <button class="button-logout" @click="logout">
             <font-awesome-icon icon="sign-out-alt" />
             로그아웃
           </button>
@@ -49,6 +49,7 @@
 
 <script>
 import Setting from '@/setting'
+import router from '@/router'
 
 export default {
   name: 'UserMenuModal',
@@ -89,6 +90,10 @@ export default {
         this.deleteSelectToggle()
         this.dangerOptionToggle()
       }
+    },
+    logout: function () {
+      this.$store.dispatch('logout')
+      router.push({ path: '/', name: 'DiaryIndexContainer', params: { logout: true } })
     }
   }
 }
