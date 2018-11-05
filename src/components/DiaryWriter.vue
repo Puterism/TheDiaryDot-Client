@@ -16,13 +16,13 @@
     </div>
     <DiaryWriterToolbar :top="toolbarTop" :left="toolbarLeft" :display="toolbarDisplay" />
     <Message v-if="tempDiary">
-      <div class="message-content" slot-scope="{nowDisplaying, toggle}">
+      <div class="message-content" slot-scope="{close}">
         <h3>임시 저장되었던 일기를 불러올까요?</h3>
         <p>저장된 일시: {{ tempDiaryDateTime }}</p>
         <div class="message-buttons">
-          <button class="load-btn" @click="loadTempDiary(); toggle();">불러오기</button>
-          <button class="delete-btn" @click="deleteTempDiary(); toggle();">삭제하기</button>
-          <button class="later-btn" @click="toggle">나중에 알림</button>
+          <button class="load-btn" @click="loadTempDiary(); close();">불러오기</button>
+          <button class="delete-btn" @click="deleteTempDiary(); close();">삭제하기</button>
+          <button class="later-btn" @click="close">나중에 알림</button>
         </div>
       </div>
     </Message>
@@ -193,7 +193,7 @@ export default {
         .then((response) => {
           const data = response.data.data.getTempDiary
           if (data) {
-            this.tempDiaryDateTime = new Date(data.savedDateTime).toLocaleString()
+            this.tempDiaryDateTime = new Date(data.savedDateTime *= 1).toLocaleString()
             this.tempDiary = data
           }
         })

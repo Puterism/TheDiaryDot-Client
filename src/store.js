@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -49,7 +48,7 @@ const store = new Vuex.Store({
     getAuthData: function (context) {
       context.commit('setToken', { token: getCookie('auth') })
       context.commit('setUserID', { userID: getCookie('fbid') })
-      // context.dispatch('getUserInfo')
+      context.commit('setUserName', { userName: getCookie('fbname') })
     }
   }
 })

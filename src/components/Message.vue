@@ -1,10 +1,12 @@
 <template>
-  <div class="message-container" :style="displayStyle" ref="message">
-    <slot :nowDisplaying="nowDisplaying" :toggle="messageToggle"></slot>
-    <span class="message-close" @click="messageToggle" v-if="!hideCloseButton">
-      <font-awesome-icon icon='times' />
-    </span>
-  </div>
+  <transition name="message-show" :duration="500" @before-enter="beforeEnter" @before-leave="beforeLeave">
+    <div class="message-container" ref="message" v-if="nowDisplaying">
+      <slot :close="messageClose"></slot>
+      <span class="message-close" @click="messageClose" v-if="!hideCloseButton">
+        <font-awesome-icon icon='times' />
+      </span>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -12,38 +14,53 @@ export default {
   name: 'Message',
   props: {
     displayTime: Number,
-    hideCloseButton: Boolean
+    hideCloseButton: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
-      nowDisplaying: false,
-      height: null
-    }
-  },
-  computed: {
-    displayStyle: function () {
-      return `top: ${this.nowDisplaying ? '0' : '-' + (this.height) + 'px'};`
+      height: null,
+      nowDisplaying: true
     }
   },
   methods: {
-    messageToggle: function () {
-      this.nowDisplaying = !this.nowDisplaying
+    messageClose: function () {
+      this.nowDisplaying = false
     },
     getHeight: function () {
-      this.height = this.$refs.message.clientHeight
+      this.height = this.$refs.message.clientHeight + 10
+    },
+    beforeEnter: function (el) {
+      this.$nextTick(function () {
+        setTimeout(() => {
+          el.style.top = `0px`
+        }, 100)
+      })
+    },
+    beforeLeave: function (el) {
+      el.style.top = `-${this.height}px`
+    },
+    autoClose: function () {
+      setTimeout(() => {
+        this.messageClose()
+      }, this.displayTime)
     }
   },
   mounted: function () {
     this.getHeight()
-    this.messageToggle()
+    this.$el.style.top = `-${this.height}px`
+    if (this.displayTime) {
+      this.autoClose()
+    }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .message-container {
   position: fixed;
-  top: -500px;
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -60,7 +77,7 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: row;
-  transition: 1s ease;
+  transition: all .5s ease;
 }
 
 .message-container h1, .message-container h2, .message-container h3, .message-container h4, .message-container h5, .message-container h6, .message-container p {
@@ -85,5 +102,11 @@ export default {
   right: 15px;
   cursor: pointer;
   font-size: 20px;
+}
+</style>
+
+<style scoped>
+.message-show-enter-active, .message-show-leave-active {
+  transition: all .5s ease;
 }
 </style>

@@ -20,7 +20,7 @@ function getCookie (cname) {
 }
 
 const auth = () => (from, to, next) => {
-  if (getCookie('auth') && getCookie('fbid')) {
+  if (getCookie('auth') && getCookie('fbid') && getCookie('fbname')) {
     return next()
   }
   return next('/')

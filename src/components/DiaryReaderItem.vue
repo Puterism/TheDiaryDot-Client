@@ -36,13 +36,13 @@ export default {
   methods: {
     parseDate: function (str) {
       const date = str.split('-')
-      this.date = new Date(date[0], date[1], date[2])
+      this.date = new Date(date[0], date[1] - 1, date[2])
     },
     parseMonth: function (month) {
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
       ]
-      return monthNames[month - 1]
+      return monthNames[month]
     },
     parseWeekday: function (weekday) {
       const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
