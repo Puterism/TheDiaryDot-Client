@@ -31,9 +31,6 @@ export default {
     messageClose: function () {
       this.nowDisplaying = false
     },
-    getHeight: function () {
-      this.height = this.$el.clientHeight + 10
-    },
     leave: function (el, done) {
       Velocity(el, { top: `-${el.clientHeight + 10}px` }, { duration: 500, easing: 'ease', complete: done })
     },
